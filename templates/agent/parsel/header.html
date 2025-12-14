@@ -1,0 +1,31 @@
+<header class="header">
+        <center><h1><a href="/">FLARTAUX 0.0.1 sous langage Python version {{pv}} cadriciel Flask version {{fv}}</a></h1></center>
+    <div class="container">
+        <nav>
+            <ul>
+                <li></li>
+				<li><a role="button" class="btn btn-primary btn-lg" href="/export_pandas_excel">export_pandas_excel</a></li>
+				<li><a role="button" class="btn btn-primary btn-lg" href="/excel_pivot_conc">contrôle</a></li>
+				<li><a role="button" class="btn btn-primary btn-lg" href="/excel">excel</a></li>
+				<li><a role="button" class="btn btn-primary btn-lg" href="/mailmerge">word</a></li>
+                <li><a href="/parsel">parsel</a></li>
+                <li><a href="/dossier">Dossier</a></li>
+                <li><a href="/groupsel">Propriétaires</a></li>
+                <li><a href="/book_list">Publicité foncière</a></li>
+                <li><a href="/fiche">Fiche</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/">Home</a></li>
+                {% if not username%}
+                <li><a href="/login">Login</a></li>
+                <li><a href="/register">Registration</a></li>
+                {% else %}
+                <li><a href="/orders">Orders</a></li>
+                <li><a href="/password-update">Update Password </a></li>
+                <li>|</li>
+                <li>Bonjour, {{username}}</li>
+                <li><a href="/logout">Logout</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+</header>

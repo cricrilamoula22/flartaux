@@ -1,0 +1,68 @@
+/* Reset any default margin and padding for all elements */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Remove any margin/padding from the HTML and body tags */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Set the body background color and font style */
+body {
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  background-color: #f4f4f4; /* Light background color */
+  display: flex;
+  justify-content: center;  /* Center the main content */
+  align-items: stretch;
+  height: 100vh;  /* Ensure it takes up full viewport height */
+}
+
+/* Create a container to hold the two equal columns */
+.container {
+  display: flex;
+  width: 100%;
+  max-width: 1200px;  /* You can adjust this to your needs */
+  height: 100%;
+  padding: 20px;
+}
+
+/* Left column styles */
+.left-column {
+  flex: 1;  /* This ensures the left column takes up half the space */
+  padding: 20px;
+  background-color: #ffcc00;  /* Example color */
+  box-sizing: border-box;  /* To include padding in the element's total width */
+}
+
+/* Right column styles */
+.right-column {
+  flex: 1;  /* This ensures the right column takes up half the space */
+  padding: 20px;
+  background-color: #0099cc;  /* Example color */
+  box-sizing: border-box;  /* To include padding in the element's total width */
+}
+
+/* Optional: Set basic styling for header and footer */
+header {
+  background-color: #333;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+footer {
+  background-color: #333;
+  color: white;
+  padding: 10px;
+  text-align: center;
+}

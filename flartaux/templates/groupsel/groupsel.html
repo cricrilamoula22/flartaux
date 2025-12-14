@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Management App</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+
+        .main-layout {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .left-fixed,
+        .right-fixed {
+            width: 250px;
+            padding: 10px;
+            box-sizing: border-box;
+            overflow-y: auto;
+            background-color: #f7f7f7;
+        }
+
+        .left-fixed {
+            border-right: 1px solid #ccc;
+        }
+
+        .right-fixed {
+            border-left: 1px solid #ccc;
+        }
+
+        .central-scrollable {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: #fff;
+        }
+
+        .central-header {
+            position: sticky;
+            top: 0;
+            background-color: #fff;
+            z-index: 10;
+            padding: 10px 0;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .group-subcolumns {
+            display: flex;
+            gap: 20px;
+        }
+
+        .group-subcolumn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin: 5px;
+        }
+
+        .group-header {
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .group-cell {
+            margin-bottom: 20px;
+            border: 2px solid #ccc;
+            padding: 15px;
+        }
+
+        .group-cell h4 {
+            margin-top: 0;
+        }
+
+        .cell {
+            border: 1px solid #ddd;
+            padding: 8px;
+            margin-bottom: 5px;
+        }
+
+        .add-item {
+            margin-bottom: 10px;
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+
+<body>
+
+    <li><a href="/bof">Home</a></li>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                {% if category == 'message' %}
+                    <div class="alert alert-success text-center" role="alert">
+                {% else %}
+                    <div class="alert alert-{{ category }} text-center" role="alert">
+                {% endif %}
+                selected item value : {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="main-layout">
+        <!-- Left Column -->
+        <div class="left-fixed column">
+            <h2>Left Items</h2>
+            <button class="add-item" id="add-left-item">Add New Left Item</button>
+            <div id="left-column">
+                {% for item in left_items %}
+                    <div class="cell" id="left-item-{{ item.par_idsuf }}">
+                        <input type="checkbox" class="left-checkbox" value="{{ item.par_idsuf }}" id="checkbox-left-{{ item.par_idsuf }}">
+                        {{ item.par_idsuf }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Central Column -->
+        <div class="central-scrollable">
+            <div class="central-header">
+                <h2>Group Column</h2>
+                <button id="add-group" class="add-item">Add New Group</button>
+            </div>
+
+            <div id="group-column">
+                {% for group in groups %}
+                    <div class="group-cell" id="group-{{ group.id }}">
+                        <div class="group-header">
+                            <h4>{{ group.name }}</h4>
+                        </div>
+                        <div class="group-subcolumns">
+                            <!-- Left Group Subcolumn -->
+                            <div class="group-subcolumn left-column" id="left-group-{{ group.id }}">
+                                <p>Left Items:</p>
+                                <button class="select-item" data-group="{{ group.id }}" data-column="left">Select Left Items</button>
+                                <div class="selected-items left">
+                                    {% for item in selected_left_items %}
+                                        {% if item.idprocpte == group.name %}
+                                            <div class="cell" data-item-id="{{ item.id }}">
+                                                {{ item.par_idsuf }}
+                                                <button class="unselect-item" 
+                                                    data-item-name="{{ item.par_idsuf }}" 
+                                                    data-column="left" 
+                                                    data-group="{{ group.id }}">
+                                                    Unselect
+                                                </button>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- Right Group Subcolumn -->
+                            <div class="group-subcolumn right-column" id="right-group-{{ group.id }}">
+                                <p>Right Items:</p>
+                                <button class="select-item" data-group="{{ group.id }}" data-column="right">Select Right Items</button>
+                                <div class="selected-items right">
+                                    {% for item in selected_right_items %}
+                                        {% if item.idprocpte == group.name %}
+                                            <div class="cell" data-item-id="{{ item.id }}">
+                                                {{ item.ddenomsansdoublon }}
+                                                <button class="unselect-item" 
+                                                    data-item-name="{{ item.ddenomsansdoublon }}" 
+                                                    data-column="right" 
+                                                    data-group="{{ group.id }}">
+                                                    Unselect
+                                                </button>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="right-fixed column">
+            <h2>Right Items</h2>
+            <button class="add-item" id="add-right-item">Add New Right Item</button>
+            <div id="right-column">
+                {% for item in right_items %}
+                    <div class="cell" id="right-item-{{ item.id }}">
+                        <input type="checkbox" class="right-checkbox" value="{{ item.ddenom }}" id="checkbox-right-{{ item.id }}">
+                        {{ item.ddenom }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+
+            // Add New Group
+            $('#add-group').on('click', function () {
+                $.post('/add_group', function (response) {
+                    $('#group-column').prepend(`
+                        <div class="group-cell" id="group-${response.group_id}">
+                            <div class="group-header">
+                                <h4>${response.group_name}</h4>
+                            </div>
+                            <div class="group-subcolumns">
+                                <div class="group-subcolumn left-column" id="left-group-${response.group_id}">
+                                    <p>Left Items:</p>
+                                    <div class="selected-items left"></div>
+                                    <button class="select-item" data-group="${response.group_id}" data-column="left">Select Left Items</button>
+                                </div>
+                                <div class="group-subcolumn right-column" id="right-group-${response.group_id}">
+                                    <p>Right Items:</p>
+                                    <div class="selected-items right"></div>
+                                    <button class="select-item" data-group="${response.group_id}" data-column="right">Select Right Items</button>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                });
+            });
+
+            // Select Item
+            $(document).on('click', '.select-item', function () {
+                var group_id = $(this).data('group');
+                var column_type = $(this).data('column');
+                var selected_items = $(`#${column_type}-column input[type="checkbox"]:checked`);
+
+                selected_items.each(function () {
+                    var item_name = $(this).val();
+                    var item_id = $(this).closest('.cell').attr('id').split('-')[2];
+
+                    $(`#${column_type}-group-${group_id} .selected-items.${column_type}`).prepend(`
+                        <div class="cell" data-item-id="${item_id}">
+                            ${item_name}
+                            <button class="unselect-item" data-item-name="${item_name}" data-column="${column_type}" data-group="${group_id}">Unselect</button>
+                        </div>
+                    `);
+                    $(this).closest('.cell').remove();
+
+                    $.post('/select_item', {
+                        item_name: item_name,
+                        group_id: group_id,
+                        column_type: column_type
+                    }).done(function () {
+                        // Refresh the selected items for the group
+                        refreshSelectedItems(group_id, column_type);
+                    });
+                });
+            });
+
+            // Unselect Item
+            $(document).on('click', '.unselect-item', function () {
+                var item_name = $(this).data('item-name');
+                var group_id = $(this).data('group');
+                var column_type = $(this).data('column');
+
+                $(this).closest('.cell').remove();
+
+                $.post('/unselect_item', {
+                    item_name: item_name,
+                    group_id: group_id,
+                    column_type: column_type
+                }).done(function () {
+                    // Refresh the available items column (left or right)
+                    refreshAvailableItems(column_type);
+
+                    // Refresh only the selected items for the group
+                    refreshSelectedItems(group_id, column_type);
+                });
+            });
+
+            // Refresh the selected items for a specific group and column
+            function refreshSelectedItems(group_id, column_type) {
+                $.get(`/render_selected_items/${group_id}`, function (html) {
+                    $(`#${column_type}-group-${group_id} .selected-items.${column_type}`).html($(html).find('.selected-items.' + column_type).html());
+                });
+            }
+
+            // Refresh the available items (left or right column)
+            function refreshAvailableItems(column_type) {
+                $.get(`/render_available_items/${column_type}`, function (html) {
+                    $(`#${column_type}-column`).html($(html).find(`#${column_type}-column`).html());
+                });
+            }
+
+        });
+    </script>
+
+</body>
+
+</html>

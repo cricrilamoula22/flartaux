@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Documents à Fusionner</title>
+    <style>
+		.flashy-link {
+    display: inline-block;
+    margin: 1rem 0;
+    padding: 1rem 2rem;
+    background-color: #28a745;
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 1.2rem;
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+    transition: transform 0.2s ease, background-color 0.3s ease;
+}
+
+.flashy-link:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(40, 167, 69, 0.8);
+}
+
+        body { font-family: Arial, sans-serif; margin: 2rem; background-color: #f8f9fa; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { padding: 0.75rem; border: 1px solid #ccc; text-align: center; }
+        th { background-color: #007bff; color: white; }
+        input[type="checkbox"] { transform: scale(1.2); }
+        button {
+            margin-top: 1rem; padding: 0.8rem 1.5rem; background-color: #28a745; color: white;
+            border: none; border-radius: 4px; font-size: 1rem; cursor: pointer;
+        }
+        button:hover { background-color: #218838; }
+        #download-link { margin-bottom: 1rem; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h1>Liste des dossiers à fusionner</h1>
+
+    <div id="download-link">
+
+    {% if download_link %}
+        <a href="{{ download_link }}" class="flashy-link">📦 Télécharger les documents ZIP</a>
+    {% endif %}
+
+<!--
+<form action="{{ url_for('main.generate_selected') }}" method="POST">
+-->
+  <!-- tableau avec dossiers -->
+  <!--
+  <button type="submit">Générer les documents sélectionnés</button>
+</form>
+-->
+<form method="POST" action="/generate_selected">
+    <input type="hidden" name="start_date" value="{{ start_date }}">
+    <input type="hidden" name="end_date" value="{{ end_date }}">
+
+    <button type="submit">Générer les documents sélectionnés</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Fusionner</th>
+                <th>Dossier</th>
+                <th>Type = 3</th>
+                <th>Motif = 0</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in main_records %}
+            <tr>
+                <td>
+                    <input type="checkbox" name="selected[]" value="{{ record.no_interne }}" checked>
+                </td>
+                <td>{{ record.no_interne }}</td>
+                <td>
+                    <input type="checkbox" name="type_checked_{{ record.no_interne }}" {% if record.type_demande == 3 %}checked{% endif %}>
+                </td>
+                <td>
+                    <input type="checkbox" name="motif_checked_{{ record.no_interne }}" {% if record.motif_ctrl == 0 %}checked{% endif %}>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <button type="submit">Générer les documents sélectionnés</button>
+</form>
+
+
+    </div>
+
+
+
+</body>
+</html>

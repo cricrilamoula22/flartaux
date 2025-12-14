@@ -1,0 +1,216 @@
+#from ..database import db
+from extensions import db
+from sqlalchemy import Table, Column, Integer, Text, Date, Boolean, String, ForeignKey
+from sqlalchemy import create_engine, Column, Integer, BigInteger, Text, Date, Boolean, String, MetaData, Table
+from sqlalchemy import PrimaryKeyConstraint, Index, UniqueConstraint, ForeignKeyConstraint
+"""
+class Item(db.Model):
+    __tablename__ = 'items'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
+    user = db.relationship('User', backref=db.backref('items', lazy=True))
+"""
+"""
+class TDemande(db.Model):
+    __tablename__ = 't_demande'
+    idt_demande = Column(BigInteger, primary_key=True)
+    #country = Column(String)
+    #idt_demande = Column(BigInteger)
+    no_interne = Column(String(9))
+    date_de_depot = Column(Date)
+    date_complet = Column(Date)
+    code_avis = Column(String(1))
+    id_commission = Column(Integer)
+    date_limiteval = Column(Date)
+    no_pacage_demandeur = Column(String(9))
+    dem_autprof = Column(String(30))
+    no_pacage_cedant = Column(String(9))
+    jeune_agriculteur = Column(Integer)
+    jeune_agr_aide = Column(Integer)
+    code_motifcess = Column(Integer)
+    type_demande = Column(Integer)
+    cedantinforme = Column(Integer)
+    uta_demandeur = Column(String(50))
+    nb_salaries = Column(String(50))
+    sau_demandeur = Column(String(50))
+    smi = Column(String(2))
+    demanter = Column(Integer)
+    surface_demandee = Column(String(50))
+    distance_siege = Column(String(50))
+    distance_parcelle = Column(String(50))
+    surface_unite_ref = Column(String(50))
+    date_transfert = Column(Date)
+    demanhs = Column(Integer)
+    type_demande_hs = Column(Integer)
+    natu_demande_hs = Column(Integer)
+    effectifhs = Column(Integer)
+    sau_ponderee_demandeur = Column(String(50))
+    pad_demandeur = Column(String(50))
+    date_signature_decision = Column(Date)
+    motif_ctrl = Column(String(2))
+    code_decision = Column(String(1))
+    date_editdecis = Column(Date)
+    optimclecomp_no_pa_id_co = Column(String(13))
+    sau_cedant = Column(String(50))
+    date_avis = Column(Date)
+    code_statut = Column(String(1))
+    motiv_c = Column(Text)
+    motiv_d = Column(Text)
+    motiv_a = Column(Text)
+    motiv_p = Column(Text)
+    sele_motictrl = Column(Integer)
+    id_commissioncode_statut = Column(String(4))
+    no_pacage_demandeurid_commission = Column(String(15))
+    no_pacage_cedantno_interne = Column(String(20))
+    id_commissioncode_statutno_pacage_cedant = Column(String(15))
+    aj6mois = Column(String(1))
+    env_giee = Column(Boolean)
+    env_dephy = Column(Boolean)
+    env_cert_maaf = Column(Boolean)
+    env_cert_biopart = Column(Boolean)
+    env_cert_biotot = Column(Boolean)
+    distance_siege_proche = Column(String(50))
+    distance_siege_eloigne = Column(String(50))
+    rt_compens_utilpub = Column(Boolean)
+    rt_compens_utilpub_surf = Column(String(50))
+    rt_compens_rprop = Column(Boolean)
+    rt_compens_rprop_surf = Column(Integer)
+    rt_compens_autre = Column(Boolean)
+    rt_compens_autre_surf = Column(String(50))
+    rt_compens_autre_motif = Column(String(50))
+    rt_deplanimaux = Column(Boolean)
+    rt_deplanimaux_surf = Column(String(50))
+    rt_echcedant = Column(Boolean)
+    rt_echcedant_surf = Column(String(50))
+    rt_bio = Column(Boolean)
+    rt_bio_surf = Column(String(50))
+    surf_rep_bio = Column(String(50))
+    surf_rep_echange = Column(String(50))
+    surf_rep_depanimaux = Column(Integer)
+    reprise_dossier = Column(Boolean)
+    date_limite_depot = Column(Date)
+    nb_concurrences = Column(Integer)
+    env_titre_sec = Column(Boolean)
+    id_naturetransac = Column(Integer)
+    instal3p = Column(Integer)
+    instalstage = Column(Integer)
+    instaletude = Column(Integer)
+    cedantexpab = Column(Integer)
+    cedantexpconv = Column(Integer)
+    rt_compens_ind_surf = Column(Boolean)
+    ide_globale = Column(String(50))
+    surf_zsce = Column(String(50))
+    id_redaction_decision = Column(Integer)
+    total_ide = Column(String(50))
+    id_gestionnaire = Column(Integer)
+    demandebat = Column(Integer)
+    saup = Column(String(50))
+    dossiersuccessif = Column(Boolean)
+    dossierconcurrentsuccessif = Column(Boolean)
+    ideuta = Column(String(50))
+    memodemandeur = Column(Text)
+    memocedant = Column(Text)
+    recours = Column(Boolean)
+    daterecours = Column(Date)
+    id_logics = Column(String(50))
+    pideuta = Column(String(50))
+    schema = Column(Integer)
+    sempastous = Column(Boolean)
+    date_sempastous = Column(Date)
+    user_id = Column(Integer)
+"""
+
+class TParceldem(db.Model):    
+    __tablename__ = 't_parceldem'
+    __table_args__ = (
+        ForeignKeyConstraint(['par_idsuf'], ['t_cadastre.idsuf'], name='fk_par_idsuf'),
+        PrimaryKeyConstraint('idt_parceldem', name='t_parceldem_pkey'),
+        Index('idx_t_parceldem_par_idsuf', 'par_idsuf'),
+        Index('idx_t_parceldem_par_nointerne', 'par_nointerne')
+    )
+    idt_parceldem = Column(BigInteger, primary_key=True)
+    par_nointerne = Column(String(9))
+    par_insee = Column(BigInteger)
+    par_idsuf = Column(String(17))
+    par_section = Column(String(2))
+    par_parcelle = Column(BigInteger)
+    par_subdi = Column(String(2))
+    par_surface = Column(String(10))
+    par_idpropr = Column(String(11))
+    par_insecpasu = Column(String(22))
+    par_ok = Column(Boolean)
+    par_bio = Column(Boolean)
+    par_echange = Column(Boolean)
+    par_deplanimaux = Column(Boolean)
+    par_nointernepar_idproprpar_insee = Column(String(29))
+    par_nointernepar_idpropr = Column(String(23))
+    par_nointernepar_insee = Column(Text)
+    par_est_modif = Column(Boolean)
+    par_nointernepar_idsuf = Column(Text)
+    par_dist_siege = Column(String(10))
+    par_surf5 = Column(String(10))
+    par_sur5a10 = Column(String(10))
+    par_surf10 = Column(String(10))
+    par_type_surf = Column(Boolean)
+    par_vol = Column(String(10))
+    par_cal = Column(String(10))
+    par_export = Column(Boolean)
+    par_prox = Column(Boolean)
+    par_liaison = Column(Boolean)
+    parc_enclave = Column(Boolean)
+    par_export_sig = Column(Boolean)
+    parc_zsce = Column(Boolean)
+    par_volsiege = Column(String(10))
+
+class TCom2023(db.Model):
+    __tablename__ = 't_com2023'
+
+    idt_com2023 = Column(BigInteger, primary_key=True, autoincrement=True)
+    com = Column(String(5))
+    dep = Column(String(3))
+    can = Column(String(5))
+    libelle = Column(String(255))
+    
+class TCadastre(db.Model):
+    __tablename__ = 't_cadastre'
+    __table_args__ = (
+        PrimaryKeyConstraint('idt_cadastre', name='t_cadastre_pkey'),
+        UniqueConstraint('idsuf', name='unique_idsuf'),
+        Index('idx_t_cadastre_idprocpte', 'idprocpte'),
+        Index('idx_t_cadastre_idsuf_idprocpte', 'idsuf', 'idprocpte')
+    )
+
+    idt_cadastre = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
+    idsuf = db.Column(db.String(17))
+    idpar = db.Column(db.String(16))
+    idprocpte = db.Column(db.String(22))
+    idcom = db.Column(db.String(5))
+    ccosec = db.Column(db.String(2))
+    dnupla = db.Column(db.String(4))
+    ccosub = db.Column(db.String(2))
+    dcntsf = db.Column(db.BigInteger)
+    idprocpte_org = db.Column(db.Text)
+    
+class TCad_dem(db.Model):
+    __tablename__ = 't_cad_dem'
+    __table_args__ = (
+        PrimaryKeyConstraint('idt_cad_dem', name='t_cad_dem_pkey'),
+        UniqueConstraint('idsuf', name='unique_idsuf'),
+        Index('idx_t_cad_dem_idprocpte', 'idprocpte'),
+        Index('idx_t_cad_dem_idsuf_idprocpte', 'idsuf', 'idprocpte')
+    )
+
+    idt_cad_dem = db.Column(db.BigInteger, primary_key=True, autoincrement=True)
+    idsuf = db.Column(db.String(17))
+    idpar = db.Column(db.String(16))
+    idprocpte = db.Column(db.String(22))
+    idcom = db.Column(db.String(5))
+    ccosec = db.Column(db.String(2))
+    dnupla = db.Column(db.String(4))
+    ccosub = db.Column(db.String(2))
+    dcntsf = db.Column(db.BigInteger)
+    idprocpte_org = db.Column(db.Text)

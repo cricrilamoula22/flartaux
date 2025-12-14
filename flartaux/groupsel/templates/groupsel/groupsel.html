@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Management App</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<style>
+        /* Ensure the left and right subcolumns are side by side */
+        .group-subcolumns {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .group-subcolumn {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin: 5px;
+        }
+
+        .group-header {
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .group-cell {
+            margin-bottom: 20px;
+            border: 2px solid #ccc;
+            padding: 15px;
+        }
+
+        /* Flexbox adjustments for proper alignment */
+        .group-cell h4 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="clearfix">
+        <div class="column">
+            <h2>groupsel Left Items</h2>
+            <button class="add-item" id="add-left-item">Add New Left Item</button>
+            <div id="left-column">
+                {% for item in t_user %}
+                    <div class="cell" id="left-item-{{ item.id }}">
+                        <input type="checkbox" class="left-checkbox" value="{{ item.username }}" id="checkbox-left-{{ item.id }}">
+                        {{ item.username }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="central-column">
+            <h2>Group Column</h2>
+            <button id="add-group" class="add-item">Add New Group</button>
+            <div id="group-column">
+                {% for TParseldem in groups %}
+                    <div class="group-cell" id="group-{{ TParseldem.par_idsuf }}">
+                        <div class="group-header">
+                            <h4>{{ TParseldem.par_idsuf }}</h4>
+                        </div>
+                        <div class="group-subcolumns">
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="column">
+            <h2>Right Items</h2>
+            <button class="add-item" id="add-right-item">Add New Right Item</button>
+            <div id="right-column">
+                {% for item in right_items %}
+                    <div class="cell" id="right-item-{{ item.id }}">
+                        <input type="checkbox" class="right-checkbox" value="{{ item.name }}" id="checkbox-right-{{ item.id }}">
+                        {{ item.name }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+// Handle the adding of a new group
+$('#add-group').on('click', function() {
+    $.post('/add_group', function(response) {
+        // Prepend the new group at the top of the group column
+        $('#group-column').prepend(`
+            <div class="group-cell" id="group-${response.group_id}">
+                <div class="group-header">
+                    <h4>${response.group_name}</h4>
+                </div>
+                <div class="group-subcolumns">
+                    <div class="group-subcolumn left-column" id="left-group-${response.group_id}">
+                        <p>Left Items:</p>
+                        <div class="selected-items left"></div>
+                        <button class="select-item" data-group="${response.group_id}" data-column="left">Select Left Items</button>
+                    </div>
+                    <div class="group-subcolumn right-column" id="right-group-${response.group_id}">
+                        <p>Right Items:</p>
+                        <div class="selected-items right"></div>
+                        <button class="select-item" data-group="${response.group_id}" data-column="right">Select Right Items</button>
+                    </div>
+                </div>
+            </div>
+        `);
+
+        // After the new group is appended, apply the flexbox layout immediately
+        $(`#group-${response.group_id} .group-subcolumns`).css('display', 'flex');
+    });
+});
+
+
+
+// Handle item selection
+$(document).on('click', '.select-item', function() {
+    var group_id = $(this).data('group');
+    var column_type = $(this).data('column');
+    var selected_items = $(`#${column_type}-column input[type="checkbox"]:checked`);
+
+    selected_items.each(function() {
+        var item_name = $(this).val();
+        var item_id = $(this).closest('.cell').attr('id').split('-')[2];
+
+        // Add item to the selected group
+        $(`#${column_type}-group-${group_id} .selected-items.${column_type}`).prepend(`
+            <div class="cell" data-item-id="${item_id}">
+                ${item_name}
+                <button class="unselect-item" data-item-name="${item_name}" data-column="${column_type}" data-group="${group_id}">Unselect</button>
+            </div>
+        `);
+
+        // Remove from the available items list
+        $(this).closest('.cell').remove();
+
+        $.post('/select_item', {
+            item_name: item_name,
+            group_id: group_id,
+            column_type: column_type
+        }).done(function() {
+            // After the post request, re-order the selected items to reflect the last selected at the top
+            reorderSelectedItems(group_id, column_type);
+        });
+    });
+});
+
+// Re-order the selected items to put the last selected at the top
+function reorderSelectedItems(group_id, column_type) {
+    var group_column = $(`#${column_type}-group-${group_id} .selected-items.${column_type}`);
+    var items = group_column.children().toArray();
+    items.reverse(); // Reverse the array to put the last selected first
+    group_column.empty(); // Clear the current items
+    group_column.append(items); // Re-append them in the new order
+}
+
+
+// Handle item unselection
+$(document).on('click', '.unselect-item', function() {
+    var item_name = $(this).data('item-name');
+    var group_id = $(this).data('group');
+    var column_type = $(this).data('column');
+
+    // Remove the item from the selected group
+    $(this).closest('.cell').remove();
+
+    // Add the item back to the available items list
+    $.post('/unselect_item', {
+        item_name: item_name,
+        group_id: group_id,
+        column_type: column_type
+    }).done(function() {
+        // Re-fetch the updated list of available items
+        refreshAvailableItems(group_id, column_type);
+    });
+});
+
+// Function to refresh the available items after unselecting
+function refreshAvailableItems(group_id, column_type) {
+    var group_column = $(`#${column_type}-group-${group_id} .selected-items.${column_type}`);
+    var available_column = $(`#${column_type}-column`);
+
+    // Re-fetch available items from the server (this is where you might want to make another API call to fetch the updated list)
+    $.get('/' + column_type + '_items', function(response) {
+        // Clear the existing available items in the column
+        available_column.empty();
+
+        // Re-populate the available items list from the response
+        response.items.forEach(function(item) {
+            available_column.append(`
+                <div class="cell" id="${column_type}-item-${item.id}">
+                    <input type="checkbox" class="${column_type}-checkbox" value="${item.name}" id="checkbox-${column_type}-${item.id}">
+                    ${item.name}
+                </div>
+            `);
+        });
+    });
+}
+
+// Add new left item
+$('#add-left-item').on('click', function() {
+    var item_name = prompt("Enter new left item name:");
+    if (item_name) {
+        $.post('/add_item', { item_name: item_name, column_type: 'left' }, function(response) {
+            $('#left-column').append(`
+                <div class="cell" id="left-item-${response.id}">
+                    <input type="checkbox" class="left-checkbox" value="${response.name}" id="checkbox-left-${response.id}">
+                    ${response.name}
+                </div>
+            `);
+        });
+    }
+});
+
+// Add new right item
+$('#add-right-item').on('click', function() {
+    var item_name = prompt("Enter new right item name:");
+    if (item_name) {
+        $.post('/add_item', { item_name: item_name, column_type: 'right' }, function(response) {
+            $('#right-column').append(`
+                <div class="cell" id="right-item-${response.id}">
+                    <input type="checkbox" class="right-checkbox" value="${response.name}" id="checkbox-right-${response.id}">
+                    ${response.name}
+                </div>
+            `);
+        });
+    }
+});
+
+
+        });
+    </script>
+</body>
+</html>

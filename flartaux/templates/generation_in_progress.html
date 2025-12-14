@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Generation Progress</title>
+    <script>
+        // Function to check the status of document generation
+        function checkGenerationStatus() {
+            fetch("/templdocx/check_status")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "in_progress") {
+                        // Document generation is still in progress, update the time gauge
+                        document.getElementById("status").innerText = "Generating document... Please wait.";
+                        let elapsedTime = data.elapsed_time;  // Time in seconds
+                        document.getElementById("time-gauge").innerText = "Elapsed time: " + elapsedTime.toFixed(2) + " seconds";
+                        
+                        // Poll every second to keep the progress updated
+                        setTimeout(checkGenerationStatus, 1000);
+                    } else if (data.status === "complete") {
+                        // Document generation complete, show the download link
+                        document.getElementById("status").innerText = "Document generation complete!";
+                        document.getElementById("download-link").innerHTML = `<a href="${data.download_link}" target="_blank">Click here to view/download your document</a>`;
+                    } else if (data.status === "error") {
+                        document.getElementById("status").innerText = "Error: " + data.message;
+                    }
+                });
+        }
+
+        // Start the polling when the page loads
+        window.onload = checkGenerationStatus;
+    </script>
+</head>
+<body>
+    <h1 id="status">Document generation in progress...</h1>
+    <div id="time-gauge">Elapsed time: 0 seconds</div>
+    <div id="download-link"></div>
+</body>
+</html>

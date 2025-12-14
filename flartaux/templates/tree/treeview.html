@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Category Tree</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jstree/dist/themes/default/style.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jstree/dist/jstree.min.js"></script>
+    <style>
+        #tree-container {
+            margin: 20px;
+        }
+        #submit {
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Category Tree</h2>
+<div id="tree-container"></div>
+<button id="submit">Submit Selection</button>
+
+<script>
+$(function() {
+    $('#tree-container').jstree({
+        'core' : {
+            'data' : {
+                'url' : '/api/tree',
+                'dataType' : 'json'
+            }
+        },
+        'plugins' : ["checkbox"]
+    });
+
+    $('#submit').click(function() {
+        const selected = $('#tree-container').jstree('get_checked');
+        console.log("Selected IDs:", selected);
+
+        $.ajax({
+            url: '/api/save-selections',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ 
+                user_id: 1, // Replace or get from session
+                selected: selected 
+            }),
+            success: function(response) {
+                alert('Selections saved!');
+            },
+            error: function() {
+                alert('Error saving selections.');
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>

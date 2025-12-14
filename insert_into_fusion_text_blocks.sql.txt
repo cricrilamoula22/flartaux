@@ -1,0 +1,14 @@
+INSERT INTO fusion_text_blocks (code, description, template)
+VALUES (
+    'BLOC_TYPE_MOTIF',
+    'Bloc type + motif (fusion conditionnelle)',
+    'IF type_checked:
+La demande sera prise en compte avec un type spécifique : {{type_name}}.
+ELSE:
+La demande est une demande standard.
+ENDIF
+
+IF motif_checked:
+Ce dossier a été déposé dans le cadre de : {{motif_name}}.
+ENDIF'
+);

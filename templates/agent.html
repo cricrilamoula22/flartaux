@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Mes tâches - {{ user.username }}</h2>
+<div class="row">
+  {% for status, items in grouped.items() %}
+    <div class="col-md-4">
+      <h4>{{ status }}</h4>
+      {% for task in items %}
+        <div class="card mb-2 p-2">
+          <b>{{ task.title }}</b><br>
+          {{ task.description }}<br>
+          <a href="{{ url_for('agent_bp.move_task', task_id=task.id, direction='forward') }}">→</a>
+          <a href="{{ url_for('agent_bp.move_task', task_id=task.id, direction='backward') }}">←</a>
+        </div>
+      {% endfor %}
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

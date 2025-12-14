@@ -1,0 +1,4 @@
+sqlacodegen --outfile models.py \
+postgresql://gollyjer:swordfish@localhost:5432/mydatabase
+
+sqlacodegen_v2 --outfile flartaux_models.py postgresql://postgres:alt@127.0.0.1:5433/flartaux

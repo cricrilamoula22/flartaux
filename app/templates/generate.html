@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Génération de documents ODT</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 400px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        input[type="date"], button {
+            width: 100%;
+            padding: 0.6rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #result {
+            margin-top: 1rem;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Générer les documents ODT</h1>
+
+<form action="{{ url_for('main.review') }}" method="POST">
+    <label>Date de début :</label>
+    <input type="date" name="start_date" required>
+    <label>Date de fin :</label>
+    <input type="date" name="end_date" required>
+    <button type="submit">Voir les dossiers</button>
+</form>
+
+
+
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('generateForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const start_date = document.getElementById('start').value;
+            const end_date = document.getElementById('end').value;
+
+            fetch('/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ start_date, end_date })
+            })
+            .then(res => res.json())
+            .then(data => {
+                const result = document.getElementById('result');
+                if (data.status === "OK") {
+                    result.innerHTML = `<p class="success"><strong>Succès !</strong> <a href="${data.download_link}">Télécharger le ZIP</a></p>`;
+                } else {
+                    result.innerHTML = `<p class="error">Erreur : ${data.message}</p>`;
+                }
+            })
+            .catch(err => {
+                document.getElementById('result').innerHTML = `<p class="error">Erreur réseau : ${err}</p>`;
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Pivot Table</title>
+</head>
+<body>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>par_idsuf</th>
+                {% for key in keys %}
+                    <th>{{ key }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in data %}
+                <tr>
+                    <td>{{ row.par_idsuf }}</td>
+                    {% for key in keys %}
+                        <td>{{ row['col_' + key] }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

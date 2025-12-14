@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Generation</title>
+    <script>
+        // Function to initiate document generation
+        function startGeneration() {
+            document.getElementById("generate-btn").disabled = true;
+            document.getElementById("status").innerText = "Generating document... Please wait.";
+            document.getElementById("time-gauge").innerText = "Elapsed time: 0 seconds";
+
+            // Send a POST request to start document generation
+            fetch("/templdocx/generate", {
+                method: "POST",
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "in_progress") {
+                    checkGenerationStatus();
+                } else {
+                    document.getElementById("status").innerText = "Error: Could not start generation.";
+                }
+            });
+        }
+
+        // Function to check the status of document generation
+        function checkGenerationStatus() {
+            fetch("/templdocx/check_status")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "in_progress") {
+                        let elapsedTime = data.elapsed_time.toFixed(2);
+                        document.getElementById("time-gauge").innerText = `Elapsed time: ${elapsedTime} seconds`;
+                        setTimeout(checkGenerationStatus, 1000);  // Check every second
+                    } else if (data.status === "complete") {
+                        document.getElementById("status").innerText = "Generation complete!";
+                        document.getElementById("download-link").innerHTML = `<a href="${data.download_link}" target="_blank">Download the document</a>`;
+                    }
+                });
+        }
+    </script>
+</head>
+<body>
+    <h1>Generate Document</h1>
+    <button id="generate-btn" onclick="startGeneration()">Generate Document</button>
+    <p id="status"></p>
+    <p id="time-gauge"></p>
+    <div id="download-link"></div>
+</body>
+</html>

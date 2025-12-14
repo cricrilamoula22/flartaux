@@ -1,0 +1,126 @@
+/* Updated unselect button styles */
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.selected-items .cell {
+    background-color: #e8f5e9;
+    border: 1px solid #4caf50;
+    margin: 5px;
+    padding: 5px;
+}
+
+.selected-items .cell button {
+    background-color: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    margin-left: 10px;
+}
+
+.selected-items .cell button:hover {
+    background-color: darkred;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+}
+
+h2 {
+    text-align: center;
+    color: #4caf50;
+}
+
+.column, .central-column {
+    float: left;
+    padding: 10px;
+    margin: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+.column {
+    width: 25%;
+}
+
+.central-column {
+    width: 40%;
+}
+
+.group-subcolumn {
+    float: left;
+    width: 48%;
+    margin: 10px 1%;
+    padding: 10px;
+    border: 1px solid #4caf50;
+    background-color: #e8f5e9;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.clearfix::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.cell {
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #e3f2fd;
+    text-align: center;
+}
+
+.cell button {
+    margin-top: 5px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4caf50;
+    color: white;
+    cursor: pointer;
+}
+
+.group-cell {
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #ffffff;
+    text-align: center;
+}
+
+.group-header {
+    font-size: 18px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.group-subcolumns {
+    display: flex;
+    justify-content: space-between;
+}
+
+.group-subcolumn {
+    flex: 1;
+    margin: 0 10px;
+    padding: 10px;
+    border: 1px solid #4caf50;
+    background-color: #e8f5e9;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.group-subcolumn p {
+    font-weight: bold;
+}

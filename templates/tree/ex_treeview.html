@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Arbre des catégories</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jstree/dist/themes/default/style.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jstree/dist/jstree.min.js"></script>
+    <style>
+        #tree-container { margin: 20px; }
+        #submit { margin: 20px; }
+    </style>
+</head>
+<body>
+
+<h2>Catégories</h2>
+<div id="tree-container"></div>
+<button id="submit">Enregistrer la sélection</button>
+
+<script>
+$(function() {
+    // Initialisation de jsTree
+    $('#tree-container').jstree({
+        'core' : {
+            'data' : {
+                'url' : '/tree/api/tree',
+                'dataType' : 'json'
+            }
+        },
+        'plugins' : ["checkbox"]
+    });
+
+    // Sauvegarde des sélections
+    $('#submit').click(function() {
+        const selected = $('#tree-container').jstree('get_checked');
+        console.log("IDs sélectionnés:", selected);
+
+        $.ajax({
+            url: '/tree/api/save-selections',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ selected: selected }),
+            success: function(response) {
+                alert('Sélections enregistrées !');
+            },
+            error: function() {
+                alert('Erreur lors de l’enregistrement.');
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>

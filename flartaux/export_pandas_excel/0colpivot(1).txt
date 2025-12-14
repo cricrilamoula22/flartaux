@@ -1,0 +1,215 @@
+select colpivot('_test_pivoted', 'SELECT libelle_commune, par_idsuf, concat(par_idsuf, chr(13), date_complet, chr(13), ''surf : '', chr(13), par_surface) as zut, u_nom_raison_sociale, no_interne
+FROM t_parceldem
+INNER JOIN t_demande
+ON t_parceldem.par_nointerne = t_demande.no_interne
+LEFT JOIN t_commune
+ON CASE WHEN SUBSTRING(t_parceldem.par_idsuf, 6, 3) LIKE ''000'' THEN SUBSTRING(t_parceldem.par_idsuf, 1, 5) ELSE CONCAT (SUBSTRING(t_parceldem.par_idsuf, 1, 2), SUBSTRING(t_parceldem.par_idsuf, 6, 3)) END  = t_commune.code_insee_commune 
+INNER JOIN t_usager
+ON t_demande.no_pacage_demandeur = t_usager.u_pacage
+WHERE date_complet BETWEEN ''2020-10-01'' AND ''2020-12-31''
+AND par_idsuf LIKE ''22%'' 
+GROUP BY t_demande.date_complet, t_parceldem.par_idsuf, t_demande.no_interne, t_usager.u_pacage, t_usager.u_nom_raison_sociale, t_commune.libelle_commune, t_parceldem.par_surface ORDER BY par_idsuf asc, no_interne desc, libelle_commune asc LIMIT 100', array['libelle_commune', 'par_idsuf'], array['no_interne', 'u_nom_raison_sociale'], '#.zut', null);
+
+select * from _test_pivoted order by libelle_commune, par_idsuf;
+
+
+select colpivot('_test_pivoted', 'SELECT libelle_commune, par_idsuf, u_nom_raison_sociale, no_interne
+FROM t_parceldem
+INNER JOIN t_demande
+ON t_parceldem.par_nointerne = t_demande.no_interne
+LEFT JOIN t_commune
+ON CASE WHEN SUBSTRING(t_parceldem.par_idsuf, 6, 3) LIKE ''000'' THEN SUBSTRING(t_parceldem.par_idsuf, 1, 5) ELSE CONCAT (SUBSTRING(t_parceldem.par_idsuf, 1, 2), SUBSTRING(t_parceldem.par_idsuf, 6, 3)) END  = t_commune.code_insee_commune 
+INNER JOIN t_usager
+ON t_demande.no_pacage_demandeur = t_usager.u_pacage
+WHERE date_complet BETWEEN ''2020-10-01'' AND ''2020-12-31''
+AND par_idsuf LIKE ''22%'' 
+GROUP BY t_demande.date_complet, t_parceldem.par_idsuf, t_demande.no_interne, t_usager.u_pacage, t_usager.u_nom_raison_sociale, t_commune.libelle_commune, t_parceldem.par_surface ORDER BY par_idsuf asc, no_interne desc, libelle_commune asc LIMIT 100', array['libelle_commune', 'par_idsuf'], array['no_interne', 'u_nom_raison_sociale'], '#.par_idsuf', null);
+
+select * from _test_pivoted order by libelle_commune, par_idsuf;
+
+
+SELECT libelle_commune, par_idsuf, u_nom_raison_sociale, no_interne
+FROM t_parceldem
+INNER JOIN t_demande
+ON t_parceldem.par_nointerne = t_demande.no_interne
+LEFT JOIN t_commune
+ON CASE WHEN SUBSTRING(t_parceldem.par_idsuf, 6, 3) LIKE '000' THEN SUBSTRING(t_parceldem.par_idsuf, 1, 5) ELSE CONCAT (SUBSTRING(t_parceldem.par_idsuf, 1, 2), SUBSTRING(t_parceldem.par_idsuf, 6, 3)) END  = t_commune.code_insee_commune 
+INNER JOIN t_usager
+ON t_demande.no_pacage_demandeur = t_usager.u_pacage
+WHERE no_interne LIKE 'C2220%' GROUP BY t_parceldem.par_idsuf, t_demande.no_interne, t_usager.u_pacage, t_usager.u_nom_raison_sociale, t_commune.libelle_commune, t_parceldem.par_surface ORDER BY par_idsuf asc, no_interne desc, libelle_commune asc
+
+
+SELECT no_interne, par_idsuf
+FROM t_demande
+LEFT JOIN LATERAL (select par_idsuf from t_parceldem where par_nointerne = no_interne) AS bof on true
+
+select colpivot('_test_pivoted', 'SELECT no_interne, par_idsuf
+FROM t_demande
+LEFT JOIN LATERAL (select par_idsuf from t_parceldem where par_nointerne = no_interne) AS bof on true
+LEFT JOIN t_commune
+ON CASE WHEN SUBSTRING(t_parceldem.par_idsuf, 6, 3) LIKE '000' THEN SUBSTRING(t_parceldem.par_idsuf, 1, 5) ELSE CONCAT (SUBSTRING(t_parceldem.par_idsuf, 1, 2), SUBSTRING(t_parceldem.par_idsuf, 6, 3)) END  = t_commune.code_insee_commune 
+INNER JOIN t_usager
+ON t_demande.no_pacage_demandeur = t_usager.u_pacage',
+    array['libelle_commune', 'par_idsuf'], array['no_interne', 'u_nom_raison_sociale'], '#.par_idsuf', null);
+
+select * from _test_pivoted order by libelle_commune, par_idsuf;
+
+
+select colpivot('_test_pivoted', 'SELECT libelle_commune, par_idsuf, u_nom_raison_sociale, no_interne
+FROM t_parceldem
+INNER JOIN t_demande
+ON t_parceldem.par_nointerne = t_demande.no_interne
+LEFT JOIN t_commune
+ON CASE WHEN SUBSTRING(t_parceldem.par_idsuf, 6, 3) LIKE '000' THEN SUBSTRING(t_parceldem.par_idsuf, 1, 5) ELSE CONCAT (SUBSTRING(t_parceldem.par_idsuf, 1, 2), SUBSTRING(t_parceldem.par_idsuf, 6, 3)) END  = t_commune.code_insee_commune 
+INNER JOIN t_usager
+ON t_demande.no_pacage_demandeur = t_usager.u_pacage
+WHERE date_complet BETWEEN '2020-09-01' AND '2020-12-31'
+AND par_idsuf LIKE '22%' 
+GROUP BY t_demande.date_complet, t_parceldem.par_idsuf, t_demande.no_interne, t_usager.u_pacage, t_usager.u_nom_raison_sociale, t_commune.libelle_commune, t_parceldem.par_surface ORDER BY par_idsuf asc, no_interne desc, libelle_commune asc, array['libelle_commune', 'par_idsuf'], array['no_interne', 'u_nom_raison_sociale'], '#.par_idsuf', null);
+
+select * from _test_pivoted order by libelle_commune, par_idsuf;
+
+
+create table _test (
+    year int,
+    month int,
+    country varchar,
+    state varchar,
+    income int
+);
+
+insert into _test values
+    (1985, 01, 'sweden', '', 10),
+    (1985, 01, 'denmark', '', 11),
+    (1985, 01, 'usa', 'washington', 13),
+    (1985, 02, 'sweden', '', 20),
+    (1985, 02, 'usa', 'washington', 21),
+    (1985, 03, 'sweden', '', 34),
+    (1985, 03, 'denmark', '', 31),
+    (1985, 03, 'usa', 'washington', 39),
+    (1990, 12, 'sweden', '', 42),
+    (1990, 12, 'denmark', '', 43),
+    (1990, 12, 'usa', 'washington', 49),
+    (1990, 12, 'germany', '', 45);
+
+select colpivot('_test_pivoted', 'select * from _test',
+    array['year', 'month'], array['country', 'state'], '#.income', null);
+
+select * from _test_pivoted order by year, month;
+
+create or replace function colpivot(
+    out_table varchar, in_query varchar,
+    key_cols varchar[], class_cols varchar[],
+    value_e varchar, col_order varchar
+) returns void as $$
+    declare
+        in_table varchar;
+        col varchar;
+        ali varchar;
+        on_e varchar;
+        i integer;
+        rec record;
+        query varchar;
+        -- This is actually an array of arrays but postgres does not support an array of arrays type so we flatten it.
+        -- We could theoretically use the matrix feature but it's extremly cancerogenous and we would have to involve
+        -- custom aggrigates. For most intents and purposes postgres does not have a multi-dimensional array type.
+        clsc_cols text[] := array[]::text[];
+        n_clsc_cols integer;
+        n_class_cols integer;
+    begin
+        in_table := quote_ident('__' || out_table || '_in');
+        execute ('create temp table ' || in_table || ' on commit drop as ' || in_query);
+        -- get ordered unique columns (column combinations)
+        query := 'select array[';
+        i := 0;
+        foreach col in array class_cols loop
+            if i > 0 then
+                query := query || ', ';
+            end if;
+            query := query || 'quote_literal(' || quote_ident(col) || ')';
+            i := i + 1;
+        end loop;
+        query := query || '] x from ' || in_table;
+        for j in 1..2 loop
+            if j = 1 then
+                query := query || ' group by ';
+            else
+                query := query || ' order by ';
+                if col_order is not null then
+                    query := query || col_order || ' ';
+                    exit;
+                end if;
+            end if;
+            i := 0;
+            foreach col in array class_cols loop
+                if i > 0 then
+                    query := query || ', ';
+                end if;
+                query := query || quote_ident(col);
+                i := i + 1;
+            end loop;
+        end loop;
+        -- raise notice '%', query;
+        for rec in
+            execute query
+        loop
+            clsc_cols := array_cat(clsc_cols, rec.x);
+        end loop;
+        n_class_cols := array_length(class_cols, 1);
+        n_clsc_cols := array_length(clsc_cols, 1) / n_class_cols;
+        -- build target query
+        query := 'select ';
+        i := 0;
+        foreach col in array key_cols loop
+            if i > 0 then
+                query := query || ', ';
+            end if;
+            query := query || '_key.' || quote_ident(col) || ' ';
+            i := i + 1;
+        end loop;
+        for j in 1..n_clsc_cols loop
+            query := query || ', ';
+            col := '';
+            for k in 1..n_class_cols loop
+                if k > 1 then
+                    col := col || ', ';
+                end if;
+                col := col || clsc_cols[(j - 1) * n_class_cols + k];
+            end loop;
+            ali := '_clsc_' || j::text;
+            query := query || '(' || replace(value_e, '#', ali) || ')' || ' as ' || quote_ident(col) || ' ';
+        end loop;
+        query := query || ' from (select distinct ';
+        i := 0;
+        foreach col in array key_cols loop
+            if i > 0 then
+                query := query || ', ';
+            end if;
+            query := query || quote_ident(col) || ' ';
+            i := i + 1;
+        end loop;
+        query := query || ' from ' || in_table || ') _key ';
+        for j in 1..n_clsc_cols loop
+            ali := '_clsc_' || j::text;
+            on_e := '';
+            i := 0;
+            foreach col in array key_cols loop
+                if i > 0 then
+                    on_e := on_e || ' and ';
+                end if;
+                on_e := on_e || ali || '.' || quote_ident(col) || ' = _key.' || quote_ident(col) || ' ';
+                i := i + 1;
+            end loop;
+            for k in 1..n_class_cols loop
+                on_e := on_e || ' and ';
+                on_e := on_e || ali || '.' || quote_ident(class_cols[k]) || ' = ' || clsc_cols[(j - 1) * n_class_cols + k];
+            end loop;
+            query := query || 'left join ' || in_table || ' as ' || ali || ' on ' || on_e || ' ';
+        end loop;
+        -- raise notice '%', query;
+        execute ('create temp table ' || quote_ident(out_table) || ' on commit drop as ' || query);
+        -- cleanup temporary in_table before we return
+        execute ('drop table ' || in_table)
+        return;
+    end;
+$$ language plpgsql volatile;

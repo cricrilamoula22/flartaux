@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Dashboard de l'unité - {{ unit.name }}</h2>
+
+<div class="row">
+  {% for status, items in grouped.items() %}
+    <div class="col-md-4">
+      <h4>{{ status }}</h4>
+      {% for task in items %}
+        <div class="card mb-2 p-2">
+          <b>{{ task.title }}</b><br>
+          {{ task.description }}<br>
+          <small>Agents:
+            {% for at in task.agent_tasks %}
+              {{ at.agent.username }}
+            {% endfor %}
+          </small>
+          <div class="mt-2">
+            <form method="post" action="{{ url_for('unit_bp.move_task', task_id=task.id, direction='backward') }}" style="display:inline;">
+              <button class="btn btn-sm btn-secondary">&larr;</button>
+            </form>
+            <form method="post" action="{{ url_for('unit_bp.move_task', task_id=task.id, direction='forward') }}" style="display:inline;">
+              <button class="btn btn-sm btn-primary">&rarr;</button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

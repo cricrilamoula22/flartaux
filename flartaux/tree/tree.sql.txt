@@ -1,0 +1,50 @@
+-- Drop the table if it exists
+DROP TABLE IF EXISTS categories CASCADE;
+
+-- Create the table
+CREATE TABLE categories (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    parent_id INTEGER REFERENCES categories(id) ON DELETE CASCADE
+);
+
+-- Insert root categories
+INSERT INTO categories (name, parent_id) VALUES
+('Electronics', NULL),  -- ID 1
+('Clothing', NULL),     -- ID 2
+('Books', NULL);        -- ID 3
+
+-- Insert children of Electronics
+INSERT INTO categories (name, parent_id) VALUES
+('Computers', 1),       -- ID 4
+('Phones', 1),          -- ID 5
+('TVs', 1);             -- ID 6
+
+-- Insert children of Computers
+INSERT INTO categories (name, parent_id) VALUES
+('Laptops', 4),         -- ID 7
+('Desktops', 4);        -- ID 8
+
+-- Insert children of Clothing
+INSERT INTO categories (name, parent_id) VALUES
+('Men', 2),             -- ID 9
+('Women', 2);           -- ID 10
+
+-- Insert children of Men
+INSERT INTO categories (name, parent_id) VALUES
+('Shirts', 9),
+('Pants', 9);
+
+-- Insert children of Books
+INSERT INTO categories (name, parent_id) VALUES
+('Fiction', 3),
+('Non-fiction', 3);
+
+DROP TABLE IF EXISTS user_selections;
+
+CREATE TABLE user_selections (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    category_id INTEGER NOT NULL REFERENCES categories(id) ON DELETE CASCADE,
+    UNIQUE(user_id, category_id)
+);

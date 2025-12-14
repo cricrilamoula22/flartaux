@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Complete</title>
+</head>
+<body>
+    <h1>Download Complete</h1>
+    <p>Your file has been generated successfully. You can download it using the link below:</p>
+    <a href="{{ url_for('templdocx.send_file_route', filename='output_with_page_breaks.docx') }}">Download your file</a>
+</body>
+</html>

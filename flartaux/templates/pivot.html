@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Tableau des parcelles</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .table-container {
+      max-height: 800px;
+      overflow: auto;
+    }
+
+    .table-container table {
+      width: 100%;
+      min-width: max-content;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      background: #343a40;
+      color: white;
+      z-index: 10;
+    }
+
+    .sticky-col-1 {
+      position: sticky;
+      left: 0;
+      background: #343a40;
+      color: white;
+      z-index: 11;
+    }
+
+    .sticky-col-2 {
+      position: sticky;
+      background: #343a40;
+      color: white;
+      z-index: 11;
+    }
+
+    td.sticky-col-1 {
+      position: sticky;
+      left: 0;
+      background: #f8f9fa;
+      z-index: 1;
+    }
+
+    td.sticky-col-2 {
+      position: sticky;
+      background: #f8f9fa;
+      z-index: 1;
+    }
+
+    table th, table td {
+      white-space: nowrap;
+      vertical-align: middle;
+      padding: 0.5rem;
+      border-right: none;
+    }
+
+    .sticky-col-1, .sticky-col-2,
+    td.sticky-col-1, td.sticky-col-2 {
+      border-right: 1px solid #dee2e6;
+    }
+  </style>
+</head>
+<body class="bg-light">
+
+<div class="container-fluid my-3">
+  <div class="card shadow border-0">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0">Tableau des parcelles par dossier</h4>
+    </div>
+    <div class="card-body px-2">
+      <div class="table-container">
+        <table class="table table-bordered table-striped table-hover align-middle" id="tableParcelles">
+          <thead>
+            <tr>
+              <th scope="col" class="sticky-col-1" id="col1Header">Identifiant parcelle</th>
+              <th scope="col" class="sticky-col-2" id="col2Header">Surface (ha)</th>
+              {% for key in keys %}
+              <th class="bg-success text-white">
+                <strong>Dossier :</strong> {{ key }}<br>
+                <strong>Demandeur :</strong> {{ labels[key]['demandeur'] }}<br>
+                <strong>Cédant :</strong> {{ labels[key]['cedant'] }}
+              </th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in data[:20] %}
+              <tr>
+                <td class="sticky-col-1">{{ row.par_idsuf }}</td>
+                <td class="sticky-col-2">
+                  {% if row.par_surface %}
+                    {{ "%.2f"|format(row.par_surface|float) }} ha
+                  {% else %}
+                    –
+                  {% endif %}
+                </td>
+                {% for key in keys %}
+                  <td>
+                    {% if row['col_' + key] %}
+                      {{ row['col_' + key].replace('/', '<br>') | safe }}
+                    {% else %}
+                      –
+                    {% endif %}
+                  </td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  window.addEventListener('load', () => {
+    const col1 = document.getElementById('col1Header');
+    const col2 = document.getElementById('col2Header');
+    if (col1 && col2) {
+      const col1Width = col1.offsetWidth;
+      col1.style.width = col1Width + 'px';
+      col2.style.left = col1Width + 'px';
+      col2.style.width = col2.offsetWidth + 'px';
+
+      document.querySelectorAll('td.sticky-col-1').forEach(td => {
+        td.style.width = col1Width + 'px';
+      });
+      document.querySelectorAll('td.sticky-col-2').forEach(td => {
+        td.style.left = col1Width + 'px';
+        td.style.width = col2.offsetWidth + 'px';
+      });
+    }
+  });
+</script>
+
+</body>
+</html>
